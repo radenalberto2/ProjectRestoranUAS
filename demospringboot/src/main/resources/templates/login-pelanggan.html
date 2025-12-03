@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Pelanggan - Restoran Premium</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global-modern.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login-pelanggan.css}" />
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-header">
+            <h1>RESTORAN PREMIUM</h1>
+            <p>Pesan Makanan Berkualitas Premium</p>
+        </div>
+
+        <div class="login-card">
+            <h2 style="text-align: center; font-family: var(--font-serif); color: var(--text-dark); border: none; margin-bottom: 2rem;">
+                Login Pelanggan
+            </h2>
+
+            <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+            <form action="/login-pelanggan" method="post">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Masukkan username Anda" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required />
+                </div>
+
+                <button type="submit" class="btn-login">Masuk Sekarang</button>
+            </form>
+
+            <div class="login-divider">atau</div>
+
+            <div class="login-footer">
+                <p>Belum memiliki akun?</p>
+                <a th:href="@{/register-pelanggan}">Buat Akun Baru</a>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a th:href="@{/}">← Kembali ke Menu Utama</a>
+        </div>
+    </div>
+</body>
+</html>

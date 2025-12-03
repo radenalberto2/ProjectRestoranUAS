@@ -1,0 +1,46 @@
+/* ==========================================
+   Transaksi List Stylesheet
+   ========================================== */
+
+.detail-toggle {
+    cursor: pointer;
+    color: #3498db;
+    text-decoration: underline;
+}
+
+.detail-row {
+    display: none;
+    background-color: #f9f9f9;
+}
+
+.detail-table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+}
+
+.detail-table th {
+    background-color: #ecf0f1;
+    padding: 8px;
+    text-align: left;
+}
+
+.detail-table td {
+    padding: 8px;
+    border-top: 1px solid #ddd;
+}
+
+.status-success { 
+    color: green; 
+    font-weight: bold; 
+}
+
+.status-failed { 
+    color: red; 
+    font-weight: bold; 
+}
+
+.status-pending { 
+    color: orange; 
+    font-weight: bold; 
+}

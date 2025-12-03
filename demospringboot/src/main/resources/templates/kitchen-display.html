@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Display System</title>
+    <link rel="stylesheet" th:href="@{/css/global-modern.css}">
+    <link rel="stylesheet" th:href="@{/css/kitchen-display.css}">
+</head>
+<body>
+    <div class="kds-container">
+        <!-- Header -->
+        <div class="kds-header">
+            <h1>👨‍🍳 Kitchen Display System</h1>
+            <div class="kds-header-right">
+                <div class="order-count">
+                    <span id="pendingCount" th:text="${pendingOrders?.size() ?: 0}"></span> Pesanan Menunggu
+                </div>
+                <button class="btn-refresh" onclick="location.reload()">🔄 Refresh</button>
+                <a th:href="@{/home}" class="btn-back">← Dashboard</a>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="kds-filters">
+            <div class="filter-group">
+                <label>Filter Menu:</label>
+                <select id="menuFilter" onchange="filterByMenu()">
+                    <option value="">Semua Menu</option>
+                    <option value="makanan">Makanan</option>
+                    <option value="minuman">Minuman</option>
+                    <option value="dessert">Dessert</option>
+                </select>
+            </div>
+            <button class="btn-filter" onclick="location.reload()">🔍 Update</button>
+        </div>
+        
+        <!-- Orders Grid -->
+        <div class="kds-grid" id="ordersGrid">
+            <!-- Successful Orders (Need to be prepared) -->
+            <div th:each="transaksi : ${successfulOrders}" class="order-card" th:id="'order-' + ${transaksi.id}">
+                <div class="order-header">
+                    <div>
+                        <div class="order-number">#Order <span th:text="${transaksi.id}"></span></div>
+                        <div class="order-time" th:text="${#temporals.format(transaksi.waktuTransaksi, 'HH:mm')}"></div>
+                    </div>
+                </div>
+                
+                <div class="order-body">
+                    <div class="customer-info">
+                        <div class="customer-name" th:text="${transaksi.pelanggan?.nama ?: 'Walk-in Customer'}"></div>
+                    </div>
+                    
+                    <ul class="items-list">
+                        <li th:each="item : ${transaksi.items}">
+                            <span class="item-name" th:text="${item.namaMenu}"></span>
+                            <span class="item-qty" th:text="${'x' + item.jumlah}"></span>
+                        </li>
+                    </ul>
+                    
+                    <div class="progress-indicator">
+                        <div class="progress-step" th:id="'progress-start-' + ${transaksi.id}"></div>
+                        <div class="progress-step" th:id="'progress-middle-' + ${transaksi.id}"></div>
+                        <div class="progress-step" th:id="'progress-end-' + ${transaksi.id}"></div>
+                    </div>
+                </div>
+                
+                <div class="order-footer">
+                    <button class="btn-status btn-preparing" th:onclick="'updateOrderStatus(' + ${transaksi.id} + ', &quot;PREPARING&quot;)'">
+                        ⏱️ Sedang Disiapkan
+                    </button>
+                    <button class="btn-status btn-done" th:onclick="'updateOrderStatus(' + ${transaksi.id} + ', &quot;READY&quot;)'">
+                        ✓ Siap Diantar
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div th:if="${successfulOrders?.isEmpty()}" class="empty-state">
+            <h2>😴 Tidak Ada Pesanan</h2>
+            <p>Semua pesanan sudah selesai dipersiapkan. Bersiaplah untuk pesanan berikutnya!</p>
+        </div>
+    </div>
+    
+    <script>
+        function updateOrderStatus(orderId, newStatus) {
+            const orderCard = document.getElementById('order-' + orderId);
+            
+            // Show visual feedback
+            if (newStatus === 'PREPARING') {
+                const progressStart = document.getElementById('progress-start-' + orderId);
+                if (progressStart) {
+                    progressStart.classList.add('active');
+                }
+                
+                // Send to server
+                fetch(`/api/transaksi/${orderId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: 'PREPARING' })
+                }).catch(err => console.log('Status update sent'));
+                
+            } else if (newStatus === 'READY') {
+                if (orderCard) {
+                    // Fill all progress steps
+                    const progressIds = ['start', 'middle', 'end'];
+                    progressIds.forEach(id => {
+                        const step = document.getElementById(`progress-${id}-${orderId}`);
+                        if (step) {
+                            step.classList.add('completed');
+                        }
+                    });
+                    
+                    // Mark as completed
+                    orderCard.classList.add('completed');
+                    
+                    // Move to bottom and disable buttons
+                    const buttons = orderCard.querySelectorAll('.btn-status');
+                    buttons.forEach(btn => btn.disabled = true);
+                    
+                    // Replace with completion badge
+                    const footer = orderCard.querySelector('.order-footer');
+                    footer.innerHTML = '<div class="order-status">✓ SIAP DIANTAR</div>';
+                }
+                
+                // Send to server
+                fetch(`/api/transaksi/${orderId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: 'READY' })
+                }).catch(err => console.log('Status update sent'));
+            }
+        }
+        
+        function filterByMenu() {
+            const menuFilter = document.getElementById('menuFilter').value;
+            const orderCards = document.querySelectorAll('.order-card');
+            
+            orderCards.forEach(card => {
+                if (!menuFilter) {
+                    card.style.display = '';
+                } else {
+                    const hasMenu = card.textContent.toLowerCase().includes(menuFilter);
+                    card.style.display = hasMenu ? '' : 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

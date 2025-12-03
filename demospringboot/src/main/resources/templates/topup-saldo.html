@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top-up Saldo</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/pelanggan.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/topup-saldo.css}"/>
+</head>
+<body>
+    <div class="topup-container">
+        <div class="topup-header">
+            <h1>💰 Top-up Saldo</h1>
+            <p>Tambahkan saldo untuk memudahkan pembayaran</p>
+        </div>
+
+        <!-- Success Message -->
+        <div th:if="${success}" class="success-box">
+            ✓ Top-up berhasil! Saldo Anda telah ditambahkan.
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${error}" class="error-box">
+            ✗ Terjadi kesalahan: <span th:text="${error}"></span>
+        </div>
+
+        <!-- Current Saldo -->
+        <div class="saldo-info">
+            <label>Saldo Anda Saat Ini</label>
+            <div class="amount" th:text="'Rp ' + ${#numbers.formatInteger(pelanggan.saldo, 0, 'DEFAULT')}">
+                Rp 0
+            </div>
+        </div>
+
+        <div class="info-box">
+            ℹ️ Gunakan saldo Anda untuk pembayaran pesanan dengan metode SALDO.
+        </div>
+
+        <!-- Top-up Form -->
+        <form method="POST" th:action="@{/pelanggan/proses-topup}">
+            <!-- Nominal Input -->
+            <div class="form-group">
+                <label for="nominal">Nominal Top-up *</label>
+                <input 
+                    type="number" 
+                    id="nominal" 
+                    name="nominal" 
+                    min="10000" 
+                    step="10000"
+                    placeholder="Masukkan nominal"
+                    required
+                />
+                <small class="small-text-gray">Minimum: Rp 10.000</small>
+            </div>
+
+            <!-- Preset Amounts -->
+            <div class="form-group">
+                <label>Atau pilih nominal populer:</label>
+                <div class="preset-buttons">
+                    <button type="button" class="preset-btn" onclick="selectPreset(50000, this)">
+                        Rp 50.000
+                    </button>
+                    <button type="button" class="preset-btn" onclick="selectPreset(100000, this)">
+                        Rp 100.000
+                    </button>
+                    <button type="button" class="preset-btn" onclick="selectPreset(250000, this)">
+                        Rp 250.000
+                    </button>
+                    <button type="button" class="preset-btn" onclick="selectPreset(500000, this)">
+                        Rp 500.000
+                    </button>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="form-group">
+                <label>Metode Pembayaran Top-up</label>
+                <div class="payment-method-group">
+                    <label>
+                        <input type="radio" name="metodePembayaran" value="TRANSFER" checked/>
+                        💳 Transfer Bank
+                    </label>
+                    <label>
+                        <input type="radio" name="metodePembayaran" value="KARTU_KREDIT"/>
+                        💰 Kartu Kredit
+                    </label>
+                    <label>
+                        <input type="radio" name="metodePembayaran" value="TUNAI"/>
+                        💵 Tunai (Langsung ke Kasir)
+                    </label>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group">
+                <label for="catatan">Catatan (Opsional)</label>
+                <textarea 
+                    id="catatan" 
+                    name="catatan" 
+                    rows="3"
+                    placeholder="Contoh: Top-up untuk persiapan makan siang"
+                    class="textarea-form"
+                ></textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button type="submit" class="btn-submit">✓ Lanjutkan Top-up</button>
+                <a href="/pelanggan/dashboard" class="btn-cancel">← Batal</a>
+            </div>
+        </form>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h3 class="faq-title">❓ Pertanyaan Umum</h3>
+            
+            <div class="faq-item">
+                <strong class="faq-question">Bagaimana cara top-up saldo?</strong>
+                <p class="faq-answer">
+                    Isi nominal yang ingin ditambahkan, pilih metode pembayaran, lalu klik "Lanjutkan Top-up".
+                </p>
+            </div>
+
+            <div class="faq-item">
+                <strong class="faq-question">Apakah top-up langsung masuk?</strong>
+                <p class="faq-answer">
+                    Untuk Transfer Bank dan Kartu Kredit, saldo akan langsung ditambahkan setelah kami verifikasi. Untuk Tunai, silakan konfirmasi ke kasir.
+                </p>
+            </div>
+
+            <div class="faq-item-last">
+                <strong class="faq-question">Apakah ada minimal top-up?</strong>
+                <p class="faq-answer">
+                    Ya, minimal top-up adalah Rp 10.000. Anda bisa top-up berapa kali saja tanpa batasan maksimal.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectPreset(amount, button) {
+            // Set the input value
+            document.getElementById('nominal').value = amount;
+            
+            // Update button highlighting
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+        }
+
+        // Validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const nominal = document.getElementById('nominal').value;
+            if (!nominal || nominal < 10000) {
+                e.preventDefault();
+                alert('Nominal minimum adalah Rp 10.000');
+            }
+        });
+    </script>
+</body>
+</html>

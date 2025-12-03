@@ -1,0 +1,195 @@
+/* ==========================================
+   Transaksi Sukses Stylesheet
+   ========================================== */
+
+.success-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.success-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: #4CAF50;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 40px;
+}
+
+.success-header h1 {
+    color: #4CAF50;
+    margin: 0;
+    font-size: 24px;
+}
+
+.success-header p {
+    color: #666;
+    margin: 10px 0 0 0;
+    font-size: 14px;
+}
+
+.receipt-section {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #f9f9f9;
+}
+
+.receipt-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 10px;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.receipt-row:last-child {
+    border-bottom: none;
+}
+
+.receipt-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.receipt-value {
+    color: #333;
+    text-align: right;
+}
+
+.receipt-total {
+    padding: 12px 0;
+    border-top: 2px solid #4CAF50;
+    border-bottom: 2px solid #4CAF50;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.receipt-total .receipt-label {
+    color: #333;
+}
+
+.receipt-total .receipt-value {
+    color: #4CAF50;
+    font-size: 16px;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.items-table thead th {
+    background: #f0f0f0;
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 12px;
+    border-bottom: 2px solid #ddd;
+}
+
+.items-table tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+}
+
+.items-table .text-right {
+    text-align: right;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn-dashboard {
+    flex: 1;
+    padding: 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.btn-dashboard:hover {
+    background: #45a049;
+}
+
+.btn-print {
+    flex: 1;
+    padding: 12px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-print:hover {
+    background: #0b7dda;
+}
+
+.payment-method {
+    display: inline-block;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.payment-method.tunai {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .button-group {
+        display: none;
+    }
+
+    .success-container {
+        box-shadow: none;
+        margin: 0;
+    }
+}

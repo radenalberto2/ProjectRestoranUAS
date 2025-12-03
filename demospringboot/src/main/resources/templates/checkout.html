@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Restoran Premium</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global-modern.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/checkout.css}" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="nav-logo">RESTORAN PREMIUM</div>
+            <div class="nav-links">
+                <a th:href="@{/pelanggan/keranjang}">← Kembali ke Keranjang</a>
+                <div class="nav-user">
+                    <a th:href="@{/logout}" class="logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>🛍️ Konfirmasi Pesanan</h1>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="checkout-container">
+            <!-- Alert Messages -->
+            <div th:if="${param.error}" class="alert-error">
+                ❌ <span th:text="${param.error}">Error</span>
+            </div>
+
+            <div class="grid-2">
+                <!-- Left Column: Order Details -->
+                <div>
+                    <!-- Customer Data -->
+                    <div class="card">
+                        <h3>👤 Data Pelanggan</h3>
+                        <div class="info-row">
+                            <span class="info-label">Nama:</span>
+                            <span class="info-value" th:text="${pelanggan.nama}">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">No. Telepon:</span>
+                            <span class="info-value" th:text="${pelanggan.noHP}">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value" th:text="${pelanggan.email}">-</span>
+                        </div>
+                        <div class="info-row border-bottom-2 pb-1">
+                            <span class="info-label">Saldo Tersedia:</span>
+                            <span class="info-value status-success" th:text="'Rp ' + ${#numbers.formatDecimal(pelanggan.saldo, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                        </div>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="card" style="margin-top: 2rem;">
+                        <h3>📑 Detail Pesanan</h3>
+                        <table class="summary-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Menu</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-right">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item, stat : ${keranjangItems}">
+                                    <td th:text="${stat.count}">1</td>
+                                    <td>
+                                        <strong th:text="${item.namaMenu}">-</strong><br>
+                                        <small class="small-text-gray" th:text="'(' + ${item.tipeMenu} + ')'"></small>
+                                    </td>
+                                    <td class="text-center" th:text="${item.jumlah}">1</td>
+                                    <td class="text-right font-bold status-success" th:text="'Rp ' + ${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')}">Rp 0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right Column: Summary & Payment -->
+                <div>
+                    <!-- Payment Summary -->
+                    <div class="card">
+                        <h3>💵 Ringkasan Pembayaran</h3>
+                        <div class="info-row">
+                            <span class="info-label">Total Item:</span>
+                            <span class="info-value" th:text="${totalItemCount} + ' item'">0 item</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Total Harga:</span>
+                            <span class="info-value color-gold" th:text="'Rp ' + ${#numbers.formatDecimal(totalHarga, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Saldo Anda:</span>
+                            <span class="info-value" th:text="'Rp ' + ${#numbers.formatDecimal(pelanggan.saldo, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                        </div>
+                        
+                        <div class="total-section">
+                            <div class="total-row">
+                                <span>Sisa Saldo:</span>
+                                <span th:if="${pelanggan.saldo - totalHarga >= 0}" 
+                                      th:text="'Rp ' + ${#numbers.formatDecimal(pelanggan.saldo - totalHarga, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                                <span th:if="${pelanggan.saldo - totalHarga < 0}" 
+                                <span class="status-danger">Kurang: <span th:text="'Rp ' + ${#numbers.formatDecimal(totalHarga - pelanggan.saldo, 0, 'COMMA', 0, 'POINT')}">Rp 0</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Insufficient Balance Warning -->
+                    <div th:if="${pelanggan.saldo - totalHarga < 0}" class="alert-warning mt-4">
+                        🚨 <strong>Saldo Tidak Cukup!</strong><br>
+                        Silakan <a th:href="@{/pelanggan/topup-saldo}" class="link-warning">top-up saldo</a> terlebih dahulu atau gunakan metode pembayaran lain.
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="card mt-4">
+                        <h3>💳 Metode Pembayaran</h3>
+                        <form id="checkoutForm" th:action="@{/pelanggan/proses-pembayaran}" method="post">
+                            <div class="payment-method">
+                                <label class="payment-option">
+                                    <input type="radio" name="metodePembayaran" value="SALDO" checked />
+                                    <div class="payment-label">
+                                        <strong>Bayar dari Saldo</strong>
+                                        <small>Saldo akun Anda akan dikurangi</small>
+                                    </div>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="metodePembayaran" value="TUNAI" />
+                                    <div class="payment-label">
+                                        <strong>Bayar Tunai</strong>
+                                        <small>Bayar langsung di tempat</small>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="mt-1-5">
+                                <label class="label-block">Catatan (Opsional):</label>
+                                <textarea name="catatan" placeholder="Tambahkan catatan untuk pesanan Anda..."></textarea>
+                            </div>
+
+                            <div class="action-buttons">
+                                <a th:href="@{/pelanggan/keranjang}" class="btn-action btn-back">← Kembali</a>
+                                <button type="submit" class="btn-action btn-submit"
+                                        th:disabled="${pelanggan.saldo < totalHarga}">
+                                    💳 Lanjutkan Pembayaran
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Info -->
+            <div class="alert-warning mt-4">
+                <strong>⚠️ Perhatian Penting:</strong>
+                <ul class="mt-1 ml-1">
+                    <li>Pastikan semua data pesanan sudah benar sebelum melanjutkan</li>
+                    <li>Transaksi tidak dapat dibatalkan setelah pembayaran berhasil</li>
+                    <li>Stok menu akan otomatis berkurang setelah pembayaran</li>
+                    <li th:if="${pelanggan.saldo < totalHarga}">Saldo Anda tidak cukup untuk pembayaran dengan metode SALDO</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-4-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Restoran Premium</h3>
+                    <p>Sistem pemesanan makanan dengan teknologi terkini.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Informasi</h3>
+                    <ul>
+                        <li><a th:href="@{/pelanggan/keranjang}">Keranjang</a></li>
+                        <li><a th:href="@{/pelanggan/dashboard}">Dashboard</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Restoran Premium. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('checkoutForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            form.addEventListener('submit', function(e) {
+                const metodePembayaran = document.querySelector('input[name="metodePembayaran"]:checked').value;
+                const totalHarga = parseInt(new URLSearchParams(window.location.search).get('totalHarga') || 0);
+                const saldo = parseInt(new URLSearchParams(window.location.search).get('saldo') || 0);
+                
+                if (metodePembayaran === 'SALDO' && totalHarga > saldo) {
+                    e.preventDefault();
+                    alert('Saldo Anda tidak cukup untuk pembayaran!');
+                    return false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+            <!-- Data Pelanggan -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                <h4 style="margin-top: 0;">📋 Data Pelanggan</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="color: #666; font-size: 0.9rem;">Nama</label>
+                        <p style="margin: 5px 0; font-weight: bold;" th:text="${pelanggan.nama}">-</p>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 0.9rem;">No. Telepon</label>
+                        <p style="margin: 5px 0; font-weight: bold;" th:text="${pelanggan.noHP}">-</p>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 0.9rem;">Email</label>
+                        <p style="margin: 5px 0; font-weight: bold;" th:text="${pelanggan.email}">-</p>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 0.9rem;">Saldo Tersedia</label>
+                        <p style="margin: 5px 0; font-weight: bold; color: #27ae60;" 
+                           th:text="'Rp ' + ${#numbers.formatDecimal(pelanggan.saldo, 0, 'COMMA', 0, 'POINT')}">Rp 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detail Pesanan -->
+            <div style="background: white; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 30px; overflow: hidden;">
+                <h4 style="background: #f0f0f0; padding: 15px; margin: 0; border-bottom: 1px solid #ddd;">
+                    📦 Detail Pesanan
+                </h4>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8f9fa; border-bottom: 2px solid #ddd;">
+                            <th style="padding: 12px; text-align: left;">No</th>
+                            <th style="padding: 12px; text-align: left;">Menu</th>
+                            <th style="padding: 12px; text-align: center;">Harga</th>
+                            <th style="padding: 12px; text-align: center;">Qty</th>
+                            <th style="padding: 12px; text-align: right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item, stat : ${keranjangItems}" style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 12px;" th:text="${stat.count}">1</td>
+                            <td style="padding: 12px;">
+                                <strong th:text="${item.namaMenu}">-</strong><br>
+                                <small style="color: #666;" th:text="'(' + ${item.tipeMenu} + ')'"></small>
+                            </td>
+                            <td style="padding: 12px; text-align: center;" 
+                                th:text="'Rp ' + ${#numbers.formatDecimal(item.harga, 0, 'COMMA', 0, 'POINT')}">Rp 0</td>
+                            <td style="padding: 12px; text-align: center;" th:text="${item.jumlah}">1</td>
+                            <td style="padding: 12px; text-align: right; font-weight: bold;" 
+                                th:text="'Rp ' + ${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')}">Rp 0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Ringkasan Pembayaran -->
+            <div style="background: white; border: 2px solid #27ae60; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                <h4 style="margin-top: 0; color: #27ae60;">💰 Ringkasan Pembayaran</h4>
+                
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <span>Total Item:</span>
+                    <span style="font-weight: bold;" th:text="${totalItemCount} + ' item'">0 item</span>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <span>Total Harga:</span>
+                    <span style="font-weight: bold; color: #27ae60;" 
+                          th:text="'Rp ' + ${#numbers.formatDecimal(totalHarga, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 2px solid #ddd;">
+                    <span>Saldo Anda:</span>
+                    <span style="font-weight: bold;" 
+                          th:text="'Rp ' + ${#numbers.formatDecimal(pelanggan.saldo, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; padding: 15px 0;">
+                    <span style="font-size: 1.1rem; font-weight: bold;">Sisa Saldo Setelah Transaksi:</span>
+                    <span th:if="${pelanggan.saldo - totalHarga >= 0}" 
+                          style="font-size: 1.1rem; font-weight: bold; color: #27ae60;"
+                          th:text="'Rp ' + ${#numbers.formatDecimal(pelanggan.saldo - totalHarga, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                    <span th:if="${pelanggan.saldo - totalHarga < 0}" 
+                          style="font-size: 1.1rem; font-weight: bold; color: #e74c3c;">
+                        Saldo Tidak Cukup! Kurang: <span th:text="'Rp ' + ${#numbers.formatDecimal(totalHarga - pelanggan.saldo, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                    </span>
+                </div>
+
+                <!-- Insufficient Balance Warning with Top-up Link -->
+                <div th:if="${pelanggan.saldo - totalHarga < 0}" 
+                     style="background: #ffebee; border: 1px solid #ef5350; border-radius: 5px; padding: 12px; margin-top: 15px;">
+                    <p style="color: #c62828; margin: 0; font-size: 14px;">
+                        💡 Saldo Anda tidak cukup. Silakan 
+                        <a th:href="@{/pelanggan/topup-saldo}" style="color: #d32f2f; font-weight: bold; text-decoration: underline;">
+                            top-up saldo
+                        </a> 
+                        terlebih dahulu atau gunakan metode pembayaran lain.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Metode Pembayaran -->
+            <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                <h4 style="margin-top: 0;">💳 Metode Pembayaran</h4>
+                <form id="checkoutForm" th:action="@{/pelanggan/proses-pembayaran}" method="post">
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 10px; font-weight: bold;">
+                            Pilih Metode Pembayaran:
+                        </label>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <label style="display: flex; align-items: center; padding: 12px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: all 0.3s;">
+                                <input type="radio" name="metodePembayaran" value="SALDO" checked 
+                                       style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer;" />
+                                <span>
+                                    <strong>Bayar dari Saldo</strong><br>
+                                    <small style="color: #666;">Saldo akun Anda akan dikurangi</small>
+                                </span>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; padding: 12px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: all 0.3s;">
+                                <input type="radio" name="metodePembayaran" value="TUNAI" 
+                                       style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer;" />
+                                <span>
+                                    <strong>Bayar Tunai</strong><br>
+                                    <small style="color: #666;">Bayar langsung di tempat (untuk dine-in)</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Catatan -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">
+                            Catatan (Opsional):
+                        </label>
+                        <textarea name="catatan" rows="3" placeholder="Tambahkan catatan untuk pesanan Anda..." 
+                                  style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: Arial; font-size: 14px;"></textarea>
+                    </div>
+
+                    <!-- Tombol Aksi -->
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <a th:href="@{/pelanggan/keranjang}" class="btn-primary" style="padding: 12px 20px; text-decoration: none;">
+                            ← Kembali
+                        </a>
+                        
+                        <button type="submit" 
+                                th:disabled="${pelanggan.saldo < totalHarga}"
+                                th:class="${pelanggan.saldo < totalHarga} ? 'btn-gray' : 'btn-add'"
+                                style="padding: 12px 30px; font-weight: bold;">
+                            💳 Lanjutkan Pembayaran
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Informasi Penting -->
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px;">
+                <h4 style="margin-top: 0; color: #856404;">⚠️ Perhatian</h4>
+                <ul style="margin-bottom: 0; color: #856404; padding-left: 20px;">
+                    <li>Pastikan semua data pesanan sudah benar sebelum melanjutkan</li>
+                    <li>Transaksi tidak dapat dibatalkan setelah pembayaran berhasil</li>
+                    <li>Stok menu akan otomatis berkurang setelah pembayaran</li>
+                    <li th:if="${pelanggan.saldo < totalHarga}">⚠️ Saldo Anda tidak cukup untuk melakukan pembayaran</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Sistem Pemesanan Restoran A
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('checkoutForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            form.addEventListener('submit', function(e) {
+                const metodePembayaran = document.querySelector('input[name="metodePembayaran"]:checked').value;
+                const totalHarga = parseInt(document.body.dataset.totalHarga || 0);
+                const saldo = parseInt(document.body.dataset.saldo || 0);
+                
+                // Validasi saldo jika metode pembayaran adalah SALDO
+                if (metodePembayaran === 'SALDO' && totalHarga > saldo) {
+                    e.preventDefault();
+                    alert('Saldo Anda tidak cukup untuk pembayaran!');
+                    return false;
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

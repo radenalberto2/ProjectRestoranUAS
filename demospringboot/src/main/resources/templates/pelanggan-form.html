@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pelanggan - Restoran Premium</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global-modern.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/pelanggan-form.css}" />
+</head>
+<body>
+    <div class="form-page-container">
+        <div class="form-card">
+            <h2 th:text="${pelanggan.id == null} ? '👤 Registrasi Pelanggan Baru' : '✏️ Edit Data Pelanggan'">Form Pelanggan</h2>
+
+            <form th:action="@{/pelanggan/save}" th:object="${pelanggan}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" th:field="*{nama}" required placeholder="Nama Pelanggan" />
+                </div>
+
+                <div class="form-group">
+                    <label>No Handphone</label>
+                    <input type="text" th:field="*{noHP}" placeholder="08xxxxx" />
+                </div>
+
+                <div class="form-group">
+                    <label>Email (Opsional)</label>
+                    <input type="email" th:field="*{email}" placeholder="email@contoh.com" />
+                </div>
+
+                <div class="form-group">
+                    <label>Alamat Lengkap</label>
+                    <textarea th:field="*{alamatPelanggan}" placeholder="Masukkan alamat domisili..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Simpan Data</button>
+                    <a th:href="@{/pelanggan}" class="btn-cancel">Batal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaksi Berhasil</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/pelanggan.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/transaksi-sukses.css}" />
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-header">
+            <div class="success-icon">✓</div>
+            <h1>Transaksi Berhasil!</h1>
+            <p>Pesanan Anda telah diterima dan diproses</p>
+        </div>
+
+        <!-- Nomor Transaksi -->
+        <div class="receipt-section">
+            <div class="receipt-title">Nomor Transaksi</div>
+            <div class="receipt-row">
+                <span class="receipt-label">No. Transaksi:</span>
+                <span class="receipt-value" th:text="${transaksi.noTransaksi}"></span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Tanggal:</span>
+                <span class="receipt-value" th:text="${#temporals.format(transaksi.waktuTransaksi, 'dd-MM-yyyy HH:mm:ss')}"></span>
+            </div>
+        </div>
+
+        <!-- Data Pelanggan -->
+        <div class="receipt-section">
+            <div class="receipt-title">Data Pelanggan</div>
+            <div class="receipt-row">
+                <span class="receipt-label">Nama:</span>
+                <span class="receipt-value" th:text="${pelanggan.nama}"></span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">No. Telepon:</span>
+                <span class="receipt-value" th:text="${pelanggan.noHP}"></span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Email:</span>
+                <span class="receipt-value" th:text="${pelanggan.email}"></span>
+            </div>
+        </div>
+
+        <!-- Detail Pesanan -->
+        <div class="receipt-section">
+            <div class="receipt-title">Detail Pesanan</div>
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Menu</th>
+                        <th class="text-right">Harga</th>
+                        <th class="text-right">Qty</th>
+                        <th class="text-right">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item, stat : ${transaksi.items}">
+                        <td th:text="${stat.count}">1</td>
+                        <td>
+                            <span th:text="${item.namaMenu}"></span>
+                            <br>
+                            <small style="color: #999;" th:text="${item.tipeMenu}"></small>
+                        </td>
+                        <td class="text-right" th:text="'Rp ' + ${#numbers.formatInteger(item.hargaSatuan, 0, 'DEFAULT')}"></td>
+                        <td class="text-right" th:text="${item.jumlah}"></td>
+                        <td class="text-right" th:text="'Rp ' + ${#numbers.formatInteger(item.subtotal, 0, 'DEFAULT')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Ringkasan Pembayaran -->
+        <div class="receipt-section">
+            <div class="receipt-title">Ringkasan Pembayaran</div>
+            
+            <div class="receipt-row">
+                <span class="receipt-label">Total Item:</span>
+                <span class="receipt-value" th:text="${transaksi.items.size()}"></span>
+            </div>
+
+            <div class="receipt-row">
+                <span class="receipt-label">Total Harga:</span>
+                <span class="receipt-value" th:text="'Rp ' + ${#numbers.formatInteger(transaksi.totalBayar, 0, 'DEFAULT')}"></span>
+            </div>
+
+            <div class="receipt-row">
+                <span class="receipt-label">Metode Pembayaran:</span>
+                <span class="receipt-value">
+                    <span class="payment-method" th:classappend="${transaksi.metodePembayaran == 'TUNAI' ? 'tunai' : ''}" 
+                        th:text="${transaksi.metodePembayaran == 'SALDO' ? 'Bayar dari Saldo' : 'Bayar Tunai'}"></span>
+                </span>
+            </div>
+
+            <div class="receipt-row" th:if="${transaksi.metodePembayaran == 'SALDO'}">
+                <span class="receipt-label">Saldo Sebelumnya:</span>
+                <span class="receipt-value" th:text="'Rp ' + ${#numbers.formatInteger(pelanggan.saldo + transaksi.totalBayar, 0, 'DEFAULT')}"></span>
+            </div>
+
+            <div class="receipt-row" th:if="${transaksi.metodePembayaran == 'SALDO'}">
+                <span class="receipt-label">Saldo Sesudah:</span>
+                <span class="receipt-value" th:text="'Rp ' + ${#numbers.formatInteger(pelanggan.saldo, 0, 'DEFAULT')}"></span>
+            </div>
+
+            <div class="receipt-row" th:if="${transaksi.catatan != null && transaksi.catatan != ''}">
+                <span class="receipt-label">Catatan:</span>
+                <span class="receipt-value" th:text="${transaksi.catatan}"></span>
+            </div>
+
+            <div class="receipt-row receipt-total">
+                <span class="receipt-label">Status Pembayaran:</span>
+                <span class="receipt-value" th:text="${transaksi.status}"></span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <a href="/pelanggan/dashboard" class="btn-dashboard">Kembali ke Dashboard</a>
+            <button onclick="window.print()" class="btn-print">Cetak Struk</button>
+        </div>
+    </div>
+</body>
+</html>

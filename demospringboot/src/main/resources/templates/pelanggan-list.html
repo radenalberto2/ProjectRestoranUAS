@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Pelanggan - Restoran Premium</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global-modern.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/pelanggan-list.css}" />
+    <script type="text/javascript" th:src="@{/js/main.js}"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="nav-logo">RESTORAN PREMIUM</div>
+            <div class="nav-links">
+                <a th:href="@{/home}">Dashboard</a>
+                <a th:href="@{/makanan}">Makanan</a>
+                <a th:href="@{/minuman}">Minuman</a>
+                <a th:href="@{/dessert}">Dessert</a>
+                <a th:href="@{/pelanggan}">Pelanggan</a>
+                <a th:href="@{/transaksi}">Transaksi</a>
+                <div class="nav-user">
+                    <a th:href="@{/logout}" class="logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>👥 Data Pelanggan</h1>
+            <p>Kelola semua data pelanggan restoran Anda</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content-header">
+            <h2>Daftar Pelanggan</h2>
+            <a th:href="@{/pelanggan/new}" class="btn btn-primary">+ Tambah Pelanggan</a>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nama Lengkap</th>
+                        <th>No Handphone</th>
+                        <th>Alamat</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${listPelanggan}">
+                        <td class="customer-name" th:text="${p.nama}"></td>
+                        <td th:text="${p.noHP}"></td>
+                        <td th:text="${p.alamatPelanggan}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/pelanggan/edit/{id}(id=${p.id})}" class="action-btn btn-edit-action">Edit</a>
+                                <a th:href="@{/pelanggan/delete/{id}(id=${p.id})}" class="action-btn btn-delete-action" onclick="return confirm('Hapus pelanggan ini?')">Hapus</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Restoran Premium</h3>
+                    <p>Sistem manajemen restoran terpadu dengan teknologi terkini.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Menu</h3>
+                    <ul>
+                        <li><a th:href="@{/makanan}">Makanan</a></li>
+                        <li><a th:href="@{/minuman}">Minuman</a></li>
+                        <li><a th:href="@{/dessert}">Dessert</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Restoran Premium. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Data Transaksi</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/transaksi-list.css}" />
+    <script type="text/javascript" th:src="@{/js/main.js}"></script>
+</head>
+<body>
+
+    <header>
+        <h2>Restoran A</h2>
+        <div class="nav-links">
+            <a th:href="@{/dessert}">Dessert</a>
+            <a th:href="@{/makanan}">Makanan</a>
+            <a th:href="@{/minuman}">Minuman</a>
+            <a th:href="@{/pelanggan}">Pelanggan</a>
+            <a th:href="@{/transaksi}">Transaksi</a>
+            <a th:href="@{/logout}" style="color: #e74c3c;">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2>Daftar Riwayat Transaksi</h2>
+        
+        <div style="margin-bottom: 20px;">
+            <a th:href="@{/transaksi/new}" class="btn-add">+ Buat Transaksi Manual</a>
+            <span style="margin: 0 10px;">|</span>
+            <a th:href="@{/transaksi?status=SUCCESS}" class="btn" style="background: #2ecc71;">Transaksi Sukses</a>
+            <a th:href="@{/transaksi?status=FAILED}" class="btn" style="background: #e74c3c;">Transaksi Gagal</a>
+            <a th:href="@{/transaksi}" class="btn" style="background: #95a5a6;">Semua</a>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>No. Transaksi</th>
+                    <th>Tanggal</th>
+                    <th>Pelanggan</th>
+                    <th>Total Bayar</th>
+                    <th>Metode</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="t : ${listTransaksi}">
+                    <td th:text="${t.noTransaksi}"></td>
+                    <td th:text="${t.tanggal}"></td>
+                    <td th:text="${t.pelanggan != null} ? ${t.pelanggan.nama} : 'Umum'"></td>
+                    <td th:text="'Rp ' + ${#numbers.formatDecimal(t.totalBayar, 0, 'COMMA', 0, 'POINT')}"></td>
+                    <td th:text="${t.metodePembayaran}"></td>
+                    <td>
+                        <span th:class="${'status-' + t.status.toLowerCase()}" 
+                              th:text="${t.status}"></span>
+                    </td>
+                    <td>
+                        <span class="detail-toggle" 
+                              th:onclick="|toggleDetail('detail-${t.id}')|">
+                            Lihat Detail
+                        </span>
+                        <a th:href="@{/transaksi/delete/{id}(id=${t.id})}" 
+                           class="btn-del" 
+                           th:onclick="|return confirm('Hapus transaksi ${t.noTransaksi}?')|">
+                            Hapus
+                        </a>
+                    </td>
+                </tr>
+                <!-- Row untuk detail transaksi -->
+                <tr th:each="t : ${listTransaksi}" class="detail-row" th:id="'detail-' + ${t.id}">
+                    <td colspan="7">
+                        <div style="padding: 15px;">
+                            <h4>Detail Pesanan:</h4>
+                            <div th:if="${t.catatan != null and t.catatan != ''}">
+                                <strong>Catatan Manual:</strong> 
+                                <span th:text="${t.catatan}"></span>
+                            </div>
+                            
+                            <table class="detail-table" th:if="${t.transaksiDetails != null and !t.transaksiDetails.isEmpty()}">
+                                <thead>
+                                    <tr>
+                                        <th>Menu</th>
+                                        <th>Tipe</th>
+                                        <th>Harga Satuan</th>
+                                        <th>Jumlah</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="detail : ${t.transaksiDetails}">
+                                        <td th:text="${detail.namaMenu}"></td>
+                                        <td th:text="${detail.tipeMenu}"></td>
+                                        <td th:text="'Rp ' + ${#numbers.formatDecimal(detail.hargaSatuan, 0, 'COMMA', 0, 'POINT')}"></td>
+                                        <td th:text="${detail.jumlah}"></td>
+                                        <td th:text="'Rp ' + ${#numbers.formatDecimal(detail.subtotal, 0, 'COMMA', 0, 'POINT')}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <div th:if="${t.catatan == null or t.catatan == ''} and 
+                                         (t.transaksiDetails == null or t.transaksiDetails.isEmpty())}">
+                                <i>Tidak ada detail pesanan</i>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function toggleDetail(detailId) {
+            var detailRow = document.getElementById(detailId);
+            if (detailRow.style.display === "none" || detailRow.style.display === "") {
+                detailRow.style.display = "table-row";
+            } else {
+                detailRow.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>

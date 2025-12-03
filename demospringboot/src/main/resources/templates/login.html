@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Pegawai - Restoran Premium</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global-modern.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-header">
+            <h1>RESTORAN PREMIUM</h1>
+            <p>Sistem Manajemen Pegawai</p>
+        </div>
+
+        <div class="login-card">
+            <h2 style="text-align: center; font-family: var(--font-serif); color: var(--text-dark); border: none; margin-bottom: 2rem;">
+                Login Pegawai
+            </h2>
+
+            <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+            <form th:action="@{/login-pegawai}" method="post">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Masukkan username Anda" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required />
+                </div>
+
+                <button type="submit" class="btn-login">Masuk Sekarang</button>
+            </form>
+
+            <div class="login-divider">atau</div>
+
+            <div class="login-footer">
+                <p>Belum punya akun pegawai?</p>
+                <a th:href="@{/register-pegawai}" style="display: inline-block; margin-top: 0.5rem;">Daftar Sebagai Pegawai</a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a th:href="@{/}" style="color: var(--accent-light); font-size: 0.9rem; transition: var(--transition);">← Kembali ke Menu Utama</a>
+        </div>
+    </div>
+</body>
+</html>

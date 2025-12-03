@@ -1,0 +1,201 @@
+/* ==================== HOME PAGE STYLES ==================== */
+
+:root {
+    --primary-gold: #D4AF37;
+    --primary-dark: #1a1a2e;
+    --secondary-dark: #16213e;
+    --accent-light: #F5F1E8;
+    --text-dark: #2d2d2d;
+    --text-light: #6b6b6b;
+    --success: #28a745;
+    --danger: #dc3545;
+    --font-serif: Georgia, 'Times New Roman', serif;
+    --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+}
+
+/* ==================== HERO SECTION ==================== */
+.hero {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+    color: var(--primary-gold);
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.hero h1 {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--primary-gold);
+}
+
+.hero p {
+    font-size: 1.1rem;
+    color: var(--accent-light);
+    font-weight: 300;
+}
+
+/* ==================== MENU GRID ==================== */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+/* ==================== MENU CARD ==================== */
+.menu-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    color: inherit;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 16px 40px rgba(212, 175, 55, 0.2);
+    border-color: var(--primary-gold);
+}
+
+.menu-card-icon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+    color: var(--primary-gold);
+    padding: 2rem 1rem;
+    text-align: center;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-card-body {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex: 1;
+}
+
+.menu-card-body > div {
+    flex: 1;
+}
+
+.menu-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-dark);
+}
+
+.menu-card-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.menu-card-arrow {
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+    margin-left: 1rem;
+    transition: transform 0.3s ease;
+    align-self: center;
+}
+
+.menu-card:hover .menu-card-arrow {
+    transform: translateX(5px);
+}
+
+/* ==================== CARD VARIANTS ==================== */
+.card-urgent {
+    border-left: 4px solid var(--danger);
+}
+
+.card-urgent .menu-card-icon {
+    background: linear-gradient(135deg, var(--danger) 0%, #c82333 100%);
+}
+
+.card-success {
+    border-left: 4px solid var(--success);
+}
+
+.card-success .menu-card-icon {
+    background: linear-gradient(135deg, var(--success) 0%, #1e7e34 100%);
+}
+
+/* ==================== UTILITIES ==================== */
+.padding-top-3rem {
+    padding-top: 3rem;
+}
+
+.margin-top-4rem {
+    margin-top: 4rem;
+}
+
+.margin-bottom-1rem {
+    margin-bottom: 1rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .menu-card-body {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .menu-card-arrow {
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 2rem 1rem;
+    }
+    
+    .hero h1 {
+        font-size: 1.5rem;
+    }
+    
+    .menu-card-icon {
+        font-size: 2rem;
+        padding: 1.5rem 1rem;
+    }
+    
+    .menu-card-title {
+        font-size: 1.1rem;
+    }
+}

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restoran Premium - Dashboard</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global-modern.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="nav-logo">RESTORAN PREMIUM</div>
+            <div class="nav-links">
+                <a th:href="@{/makanan}">Makanan</a>
+                <a th:href="@{/minuman}">Minuman</a>
+                <a th:href="@{/dessert}">Dessert</a>
+                <a th:href="@{/pelanggan}">Pelanggan</a>
+                <div class="nav-user">
+                    <a th:href="@{/logout}" class="logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>✨ Selamat Datang</h1>
+            <p>Sistem Manajemen Restoran & Penjualan Premium</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Menu Grid -->
+        <div class="menu-grid padding-top-3rem">
+            <!-- Kitchen Display -->
+            <a th:href="@{/transaksi/kitchen-display}" class="menu-card card-urgent">
+                <div class="menu-card-icon">👨‍🍳</div>
+                <div class="menu-card-body">
+                    <div>
+                        <h3 class="menu-card-title">Kitchen Display</h3>
+                        <p class="menu-card-subtitle">Lihat menu yang perlu dibuat</p>
+                    </div>
+                    <span class="menu-card-arrow">→</span>
+                </div>
+            </a>
+
+            <!-- History Transaksi -->
+            <a th:href="@{/transaksi/history}" class="menu-card card-success">
+                <div class="menu-card-icon">📋</div>
+                <div class="menu-card-body">
+                    <div>
+                        <h3 class="menu-card-title">History Transaksi</h3>
+                        <p class="menu-card-subtitle">Riwayat pesanan lengkap</p>
+                    </div>
+                    <span class="menu-card-arrow">→</span>
+                </div>
+            </a>
+
+            <!-- Data Makanan -->
+            <a th:href="@{/makanan}" class="menu-card">
+                <div class="menu-card-icon">🍕</div>
+                <div class="menu-card-body">
+                    <div>
+                        <h3 class="menu-card-title">Data Makanan</h3>
+                        <p class="menu-card-subtitle">Kelola menu makanan</p>
+                    </div>
+                    <span class="menu-card-arrow">→</span>
+                </div>
+            </a>
+
+            <!-- Data Minuman -->
+            <a th:href="@{/minuman}" class="menu-card">
+                <div class="menu-card-icon">🥤</div>
+                <div class="menu-card-body">
+                    <div>
+                        <h3 class="menu-card-title">Data Minuman</h3>
+                        <p class="menu-card-subtitle">Kelola menu minuman</p>
+                    </div>
+                    <span class="menu-card-arrow">→</span>
+                </div>
+            </a>
+
+            <!-- Data Dessert -->
+            <a th:href="@{/dessert}" class="menu-card">
+                <div class="menu-card-icon">🍰</div>
+                <div class="menu-card-body">
+                    <div>
+                        <h3 class="menu-card-title">Data Dessert</h3>
+                        <p class="menu-card-subtitle">Kelola menu dessert</p>
+                    </div>
+                    <span class="menu-card-arrow">→</span>
+                </div>
+            </a>
+
+            <!-- Data Pelanggan -->
+            <a th:href="@{/pelanggan}" class="menu-card">
+                <div class="menu-card-icon">👥</div>
+                <div class="menu-card-body">
+                    <div>
+                        <h3 class="menu-card-title">Data Pelanggan</h3>
+                        <p class="menu-card-subtitle">Kelola data pelanggan</p>
+                    </div>
+                    <span class="menu-card-arrow">→</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="margin-top-4rem">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Restoran Premium</h3>
+                    <p class="margin-bottom-1rem">Sistem manajemen restoran terpadu dengan teknologi terkini.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Menu</h3>
+                    <ul>
+                        <li><a th:href="@{/makanan}">Makanan</a></li>
+                        <li><a th:href="@{/minuman}">Minuman</a></li>
+                        <li><a th:href="@{/dessert}">Dessert</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Admin</h3>
+                    <ul>
+                        <li><a th:href="@{/pelanggan}">Data Pelanggan</a></li>
+                        <li><a th:href="@{/logout}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Restoran Premium. All rights reserved. | Designed with elegance</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="text/javascript" th:src="@{/js/main.js}"></script>
+</body>
+</html>

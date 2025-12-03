@@ -1,0 +1,164 @@
+.page-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: var(--accent-light);
+    padding: 3rem 0;
+    margin-bottom: 3rem;
+}
+
+.page-header h1 {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    color: var(--primary-gold);
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.page-header p {
+    margin: 0.5rem 0 0 0;
+    opacity: 0.9;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.content-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    border: none;
+    color: var(--text-dark);
+}
+
+.table-wrapper {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: var(--primary-dark);
+    color: var(--accent-light);
+}
+
+thead th {
+    padding: 1.25rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    border: none;
+}
+
+tbody td {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-dark);
+}
+
+tbody tr:hover {
+    background: var(--accent-light);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.stock-status {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.stock-available {
+    background: rgba(39, 174, 96, 0.2);
+    color: var(--success);
+}
+
+.stock-unavailable {
+    background: rgba(231, 76, 60, 0.2);
+    color: var(--danger);
+}
+
+.size-badge {
+    background: rgba(212, 175, 55, 0.2);
+    color: var(--primary-gold);
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.price-text {
+    font-family: var(--font-serif);
+    color: var(--primary-gold);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-edit-action {
+    background: var(--warning);
+    color: white;
+}
+
+.btn-edit-action:hover {
+    background: #e67e22;
+}
+
+.btn-delete-action {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-delete-action:hover {
+    background: #c0392b;
+}
+
+@media (max-width: 768px) {
+    .page-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .content-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

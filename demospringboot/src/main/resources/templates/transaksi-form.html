@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Input Transaksi</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+    <header>
+        <h2>Restoran A</h2>
+        <div class="nav-links">
+            <a th:href="@{/home}">Kembali ke Dashboard</a>
+        </div>
+    </header>
+
+    <div class="form-container">
+        <h2>Form Input Transaksi</h2>
+
+        <form th:action="@{/transaksi/save}" th:object="${transaksi}" method="post">
+            <input type="hidden" th:field="*{id}" />
+
+            <label>Pilih Pelanggan</label>
+            <select th:field="*{pelanggan}">
+                <option value="">-- Pelanggan --</option>
+                <option th:each="p : ${listPelanggan}" th:value="${p.id}" th:text="${p.nama}"></option>
+            </select>
+
+            <label>Catatan Pesanan</label>
+            <textarea th:field="*{catatan}" placeholder="Contoh: 2 Nasi Goreng, 1 Es Teh" rows="4"></textarea>
+
+            <label>Total Bayar (Rp)</label>
+            <input type="number" th:field="*{totalBayar}" required placeholder="0" />
+
+            <label>Metode Pembayaran</label>
+            <select th:field="*{metodePembayaran}">
+                <option value="">-- Pilih Metode --</option>
+                <option value="Cash">Tunai / Cash</option>
+                <option value="QRIS">QRIS / E-Wallet</option>
+                <option value="Debit">Kartu Debit/Kredit</option>
+            </select>
+            <br /><br />
+
+            <div style="margin-top: 20px;">
+                <button type="submit">Simpan Transaksi</button>
+                <a th:href="@{/transaksi}" class="btn" style="background: #95a5a6; color: #2d2d2d; font-weight: 600;">Batal</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+
+</html>

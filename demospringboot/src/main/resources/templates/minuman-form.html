@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Minuman - Restoran Premium</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global-modern.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/form-page.css}" />
+</head>
+<body>
+    <div class="form-page-container">
+        <div class="form-card">
+            <h2 th:text="${minuman.id == null} ? '🥤 Tambah Minuman Baru' : '✏️ Edit Data Minuman'">Form Minuman</h2>
+
+            <form th:action="@{/minuman/save}" th:object="${minuman}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="form-group">
+                    <label>Nama Minuman</label>
+                    <input type="text" th:field="*{nama}" required placeholder="Contoh: Es Jeruk Murni" />
+                </div>
+
+                <div class="form-group">
+                    <label>Deskripsi Produk</label>
+                    <textarea th:field="*{deskripsiItem}" placeholder="Contoh: Rasa segar, es batu alami..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Stok Tersedia</label>
+                    <input type="number" th:field="*{stock}" required placeholder="Jumlah stok" />
+                </div>
+
+                <div class="form-group">
+                    <label>Ukuran Gelas</label>
+                    <select th:field="*{ukuran}">
+                        <option value="Small">Small (Kecil)</option>
+                        <option value="Medium">Medium (Sedang)</option>
+                        <option value="Large">Large (Besar)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Harga (Rp)</label>
+                    <input type="number" th:field="*{harga}" required placeholder="0" />
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Simpan Data</button>
+                    <a th:href="@{/minuman}" class="btn-cancel">Batal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+        &copy; 2025 Sistem Restoran A
+    </footer>
+
+</body>
+
+</html>

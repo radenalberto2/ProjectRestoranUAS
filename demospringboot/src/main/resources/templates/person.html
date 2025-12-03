@@ -1,0 +1,54 @@
+<html>
+
+<head>
+    <title>Person Page</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/person.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/table.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/form.css}" />
+</head>
+
+<body>
+    <div class="first-box">
+        <h2>Person List</h2>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Kode</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody th:each="d, no : ${personList}">
+                <tr>
+                    <td th:text="${no.count}"></td>
+                    <td th:text="${d.getKode()}"></td>
+                    <td th:text="${d.getName()}"></td>
+                    <td th:text="${d.getNoHP()}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="second-box">
+        <div id="feedback-form">
+            <h2 class="header">Form Person</h2>
+            <form th:action="@{/person/submit/{id}(id=${personRec?.getId()})}" method="post" th:object="${personInfo}"
+                class="form-group">
+                <label for="id" class="form-label">ID</label>
+                <input type="number" id="id" name="id" th:value="${personRec != null} ? ${personRec.getId()}: '0'"
+                    readonly />
+                <label for="kode" class="form-label">Kode</label>
+                <input type="text" id="kode" name="kode" th:value="${personRec?.getKode()}" required />
+                <label for="name" class="form-label">Name</label>
+                <input type="text" id="name" name="name" th:value="${personRec?.getName()}" required />
+                <label for="desc" class="form-label">No HP</label>
+                <textarea type="text" id="noHP" name="noHP" th:text="${personRec?.getNoHP()}">
+</textarea>
+                <button type="submit" class="btn btn-primary" name="add">Add</button>
+                <button type="submit" class="btn btn-primary" name="edit">Edit</button>
+                <button type="submit" class="btn btn-primary" name="delete">Delete</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html> 

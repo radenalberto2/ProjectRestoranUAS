@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Makanan - Restoran Premium</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global-modern.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/form-page.css}" />
+</head>
+<body>
+    <div class="form-page-container">
+        <div class="form-card">
+            <h2 th:text="${makanan.id == null} ? '🍽️ Tambah Makanan Baru' : '✏️ Edit Data Makanan'">Form Makanan</h2>
+
+            <form th:action="@{/makanan/save}" th:object="${makanan}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="form-group">
+                    <label>Nama Makanan</label>
+                    <input type="text" th:field="*{nama}" required placeholder="Contoh: Nasi Goreng Spesial" />
+                </div>
+
+                <div class="form-group">
+                    <label>Deskripsi Produk</label>
+                    <textarea th:field="*{deskripsiItem}" placeholder="Contoh: Rasa pedas manis, porsi jumbo..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Stok Tersedia</label>
+                    <input type="number" th:field="*{stock}" required placeholder="Jumlah stok saat ini" />
+                </div>
+
+                <div class="form-group">
+                    <label>Harga (Rp)</label>
+                    <input type="number" th:field="*{harga}" required placeholder="0" />
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Simpan Data</button>
+                    <a th:href="@{/makanan}" class="btn-cancel">Batal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

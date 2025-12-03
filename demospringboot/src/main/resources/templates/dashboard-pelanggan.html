@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pelanggan - Restoran Premium</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global-modern.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/dashboard-pelanggan.css}" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="nav-logo">RESTORAN PREMIUM</div>
+            <div class="nav-links">
+                <a th:href="@{/pelanggan/topup-saldo}">💰 Topup Saldo</a>
+                <a th:href="@{/pelanggan/keranjang}" class="cart-link">
+                    🛒 Keranjang <span th:if="${keranjangItemCount > 0}" th:text="'(' + ${keranjangItemCount} + ')'" class="cart-count"></span>
+                </a>
+                <div class="nav-user">
+                    <a th:href="@{/logout}" class="logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section class="dashboard-header">
+        <div class="container">
+            <h1>👨‍💼 Selamat Datang, <span th:text="${pelanggan.nama}">Nama</span>!</h1>
+            <div class="dashboard-info">
+                <div class="info-card">
+                    <div class="info-card-label">💰 Saldo Tersedia</div>
+                    <div class="info-card-value" th:text="'Rp ' + ${#numbers.formatDecimal(pelanggan.saldo, 0, 'COMMA', 0, 'POINT')}">Rp 0</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">🛒 Item di Keranjang</div>
+                    <div class="info-card-value" th:text="${keranjangItemCount} + ' item'">0 item</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Alert Messages -->
+        <div th:if="${param.success}" class="alert-success">
+            ✅ <span th:text="${param.success}">Berhasil</span>
+        </div>
+        <div th:if="${param.error}" class="alert-danger">
+            ❌ <span th:text="${param.error}">Error</span>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${param.success}" class="alert-success">
+            ✅ <span th:text="${param.success}">Berhasil</span>
+        </div>
+        <div th:if="${param.error}" class="alert-danger">
+            ❌ <span th:text="${param.error}">Error</span>
+        </div>
+
+        <!-- Form untuk menambah multiple items sekaligus -->
+        <form id="multiAddForm" class="multi-add-form">
+            <div class="multi-add-header">
+                <h3 class="margin-0">🍽️ Pilih Menu Favorit Anda</h3>
+                <button type="button" id="clearAllBtn" class="btn-clear-selections">
+                    ✓ Bersihkan Pilihan
+                </button>
+            </div>
+
+            <!-- Makanan Section -->
+            <h4 class="menu-section-title">🍕 MAKANAN</h4>
+            <div class="menu-grid">
+                <div th:each="m : ${listMakanan}" class="menu-card">
+                    <div class="menu-icon">🍕</div>
+                    <h4 class="menu-card-title" th:text="${m.nama}">Menu Name</h4>
+                    <p class="menu-card-price" th:text="'Rp ' + ${#numbers.formatDecimal(m.harga, 0, 'COMMA', 0, 'POINT')}">Rp 0</p>
+                    <p class="menu-card-stock" th:class="${m.stock > 0} ? 'stock-available' : 'stock-unavailable'"
+                       th:text="${m.stock > 0} ? ('Stok: ' + ${m.stock}) : 'STOK HABIS'">Stock info</p>
+                    
+                    <!-- Checkbox dan quantity input untuk multi-select -->
+                    <div th:if="${m.stock > 0}" class="menu-selection-box">
+                        <div class="menu-selection-item">
+                            <input type="checkbox" th:id="'makanan_' + ${m.id}" 
+                                   class="menu-checkbox" 
+                                   th:data-type="MAKANAN"
+                                   th:data-id="${m.id}"
+                                   th:data-nama="${m.nama}"
+                                   th:data-harga="${m.harga}"
+                                   th:data-stok="${m.stock}" />
+                            <label th:for="'makanan_' + ${m.id}">Pilih item ini</label>
+                        </div>
+                        <div class="menu-qty-control">
+                            <label>Jumlah:</label>
+                            <input type="number" th:id="'qty_makanan_' + ${m.id}" 
+                                   value="1" min="1" th:max="${m.stock}"
+                                   class="menu-qty-input" />
+                        </div>
+                    </div>
+                    <div th:if="${m.stock <= 0}" style="padding: 1rem;">
+                        <button disabled class="btn-gray" style="width: 100%; padding: 0.6rem;">Stok Habis</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Minuman Section -->
+            <h4 class="menu-section-title">🥤 MINUMAN</h4>
+            <div class="menu-grid">
+                <div th:each="m : ${listMinuman}" class="menu-card">
+                    <div class="menu-icon">🥤</div>
+                    <h4 class="menu-card-title" th:text="${m.nama}">Menu Name</h4>
+                    <p class="menu-card-price" th:text="'Rp ' + ${#numbers.formatDecimal(m.harga, 0, 'COMMA', 0, 'POINT')}">Rp 0</p>
+                    <p class="menu-card-stock" th:class="${m.stock > 0} ? 'stock-available' : 'stock-unavailable'"
+                       th:text="${m.stock > 0} ? ('Stok: ' + ${m.stock}) : 'STOK HABIS'">Stock info</p>
+                    
+                    <!-- Checkbox dan quantity input untuk multi-select -->
+                    <div th:if="${m.stock > 0}" class="menu-selection-box">
+                        <div class="menu-selection-item">
+                            <input type="checkbox" th:id="'minuman_' + ${m.id}" 
+                                   class="menu-checkbox" 
+                                   th:data-type="MINUMAN"
+                                   th:data-id="${m.id}"
+                                   th:data-nama="${m.nama}"
+                                   th:data-harga="${m.harga}"
+                                   th:data-stok="${m.stock}" />
+                            <label th:for="'minuman_' + ${m.id}">Pilih item ini</label>
+                        </div>
+                        <div class="menu-qty-control">
+                            <label>Jumlah:</label>
+                            <input type="number" th:id="'qty_minuman_' + ${m.id}" 
+                                   value="1" min="1" th:max="${m.stock}"
+                                   class="menu-qty-input" />
+                        </div>
+                    </div>
+                    <div th:if="${m.stock <= 0}" style="padding: 1rem;">
+                        <button disabled class="btn-gray" style="width: 100%; padding: 0.6rem;">Stok Habis</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dessert Section -->
+            <h4 class="menu-section-title">🍰 DESSERT</h4>
+            <div class="menu-grid">
+                <div th:each="d : ${listDessert}" class="menu-card">
+                    <div class="menu-icon">🍰</div>
+                    <h4 class="menu-card-title" th:text="${d.nama}">Menu Name</h4>
+                    <p class="menu-card-price" th:text="'Rp ' + ${#numbers.formatDecimal(d.harga, 0, 'COMMA', 0, 'POINT')}">Rp 0</p>
+                    <p class="menu-card-stock" th:class="${d.stock > 0} ? 'stock-available' : 'stock-unavailable'"
+                       th:text="${d.stock > 0} ? ('Stok: ' + ${d.stock}) : 'STOK HABIS'">Stock info</p>
+                    
+                    <!-- Checkbox dan quantity input untuk multi-select -->
+                    <div th:if="${d.stock > 0}" class="menu-selection-box">
+                        <div class="menu-selection-item">
+                            <input type="checkbox" th:id="'dessert_' + ${d.id}" 
+                                   class="menu-checkbox" 
+                                   th:data-type="DESSERT"
+                                   th:data-id="${d.id}"
+                                   th:data-nama="${d.nama}"
+                                   th:data-harga="${d.harga}"
+                                   th:data-stok="${d.stock}" />
+                            <label th:for="'dessert_' + ${d.id}">Pilih item ini</label>
+                        </div>
+                        <div class="menu-qty-control">
+                            <label>Jumlah:</label>
+                            <input type="number" th:id="'qty_dessert_' + ${d.id}" 
+                                   value="1" min="1" th:max="${d.stock}"
+                                   class="menu-qty-input" />
+                        </div>
+                    </div>
+                    <div th:if="${d.stock <= 0}" style="padding: 1rem;">
+                        <button disabled class="btn-gray" style="width: 100%; padding: 0.6rem;">Stok Habis</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <div class="selected-count" id="selectedCount">
+                    ✓ 0 item dipilih
+                </div>
+                <button type="button" id="addAllBtn" class="btn-add-all" disabled>
+                    🛒 Tambahkan ke Keranjang
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <h4>Restoran Premium</h4>
+                    <p>Nikmati pengalaman bersantap yang tak terlupakan bersama kami.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Menu</h4>
+                    <ul>
+                        <li><a th:href="@{/pelanggan/dashboard}">Pesan Sekarang</a></li>
+                        <li><a th:href="@{/pelanggan/keranjang}">Keranjang</a></li>
+                        <li><a th:href="@{/transaksi/history}">Riwayat Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Akun</h4>
+                    <ul>
+                        <li><a th:href="@{/pelanggan/topup-saldo}">Topup Saldo</a></li>
+                        <li><a th:href="@{/pelanggan/dashboard}">Dashboard</a></li>
+                        <li><a th:href="@{/logout}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Sistem Pemesanan Restoran Premium. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Script untuk multi-select dan tambah semua sekaligus
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.menu-checkbox');
+            const addAllBtn = document.getElementById('addAllBtn');
+            const clearAllBtn = document.getElementById('clearAllBtn');
+            const selectedCountEl = document.getElementById('selectedCount');
+            
+            // Update counter dan button state
+            function updateSelectedCount() {
+                const checked = document.querySelectorAll('.menu-checkbox:checked').length;
+                selectedCountEl.textContent = '✓ ' + checked + ' item dipilih';
+                addAllBtn.disabled = checked === 0;
+                addAllBtn.style.opacity = checked === 0 ? '0.5' : '1';
+                addAllBtn.style.cursor = checked === 0 ? 'not-allowed' : 'pointer';
+            }
+            
+            // Event listener untuk semua checkbox
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelectedCount);
+            });
+            
+            // Clear all selections
+            clearAllBtn.addEventListener('click', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                updateSelectedCount();
+            });
+            
+            // Tambah semua item yang dipilih ke keranjang
+            addAllBtn.addEventListener('click', function() {
+                const selectedItems = document.querySelectorAll('.menu-checkbox:checked');
+                
+                if (selectedItems.length === 0) {
+                    alert('Pilih minimal 1 item terlebih dahulu!');
+                    return;
+                }
+                
+                addAllBtn.disabled = true;
+                addAllBtn.textContent = '⏳ Sedang Memproses...';
+                
+                // Buat array dari semua item yang dipilih
+                const itemsToAdd = [];
+                selectedItems.forEach(checkbox => {
+                    const tipeMenu = checkbox.dataset.type;
+                    const idMenu = checkbox.dataset.id;
+                    const namaMenu = checkbox.dataset.nama;
+                    const harga = checkbox.dataset.harga;
+                    const stok = checkbox.dataset.stok;
+                    const qtyInput = document.getElementById('qty_' + tipeMenu.toLowerCase() + '_' + idMenu);
+                    const jumlah = parseInt(qtyInput.value) || 1;
+                    
+                    itemsToAdd.push({
+                        tipeMenu,
+                        idMenu,
+                        namaMenu,
+                        harga,
+                        stok,
+                        jumlah
+                    });
+                });
+                
+                // Submit items secara berurutan dengan fetch
+                submitItemsSequentially(itemsToAdd, 0);
+            });
+            
+            // Helper function untuk submit items satu per satu
+            function submitItemsSequentially(items, index) {
+                if (index >= items.length) {
+                    // Semua item sudah ditambahkan, redirect ke keranjang
+                    window.location.href = '/pelanggan/keranjang?success=Semua%20item%20berhasil%20ditambahkan%20ke%20keranjang';
+                    return;
+                }
+                
+                const item = items[index];
+                const formData = new FormData();
+                formData.append('tipeMenu', item.tipeMenu);
+                formData.append('idMenu', item.idMenu);
+                formData.append('namaMenu', item.namaMenu);
+                formData.append('harga', item.harga);
+                formData.append('stok', item.stok);
+                formData.append('jumlah', item.jumlah);
+                
+                fetch('/pelanggan/tambah-keranjang', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    // Submit item berikutnya
+                    submitItemsSequentially(items, index + 1);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addAllBtn.disabled = false;
+                    addAllBtn.textContent = '🛒 Tambahkan ke Keranjang';
+                    alert('Terjadi kesalahan saat menambahkan item');
+                });
+            }
+            
+            // Initialize button state
+            updateSelectedCount();
+        });
+    </script>
+
+</body>
+</html>

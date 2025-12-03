@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keranjang Belanja - Restoran Premium</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/global-modern.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/keranjang.css}" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="nav-logo">RESTORAN PREMIUM</div>
+            <div class="nav-links">
+                <a th:href="@{/pelanggan/dashboard}">Menu Makanan</a>
+                <div class="nav-user">
+                    <a th:href="@{/logout}" class="logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>🛒 Keranjang Belanja Anda</h1>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Alert Messages -->
+        <div th:if="${param.success}" class="alert-success">
+            ✅ <span th:text="${param.success}">Berhasil</span>
+        </div>
+        <div th:if="${param.error}" class="alert-danger">
+            ❌ <span th:text="${param.error}">Error</span>
+        </div>
+
+        <!-- Jika keranjang kosong -->
+        <div th:if="${keranjangItems == null or keranjangItems.empty}" class="empty-state">
+            <div class="empty-icon">🛒</div>
+            <h3>Keranjang Anda Masih Kosong</h3>
+            <p>Belum ada item yang ditambahkan ke keranjang belanja.</p>
+            <a th:href="@{/pelanggan/dashboard}" class="btn btn-primary mt-1-5">
+                Mulai Belanja Sekarang
+            </a>
+        </div>
+
+        <!-- Jika ada item di keranjang -->
+        <div th:unless="${keranjangItems == null or keranjangItems.empty}">
+            <!-- Customer Info Card -->
+            <div class="customer-card">
+                <div class="customer-info-row">
+                    <span class="customer-label">👤 Pelanggan:</span>
+                    <span class="customer-value" th:text="${pelanggan.nama}">Nama Pelanggan</span>
+                </div>
+                <div class="customer-info-row">
+                    <span class="customer-label">💰 Saldo Tersedia:</span>
+                    <span class="customer-value" th:text="'Rp ' + ${#numbers.formatDecimal(pelanggan.saldo, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <div class="cart-table-wrapper">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th class="w-5">No</th>
+                            <th class="w-30">Menu</th>
+                            <th class="w-15">Harga Satuan</th>
+                            <th class="w-25">Jumlah</th>
+                            <th class="w-15">Subtotal</th>
+                            <th class="w-10">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item, stat : ${keranjangItems}">
+                            <td th:text="${stat.count}">1</td>
+                            <td>
+                                <div class="menu-name" th:text="${item.namaMenu}">Menu Name</div>
+                                <div class="menu-type" th:text="'Tipe: ' + ${item.tipeMenu}">Tipe: Menu</div>
+                            </td>
+                            <td class="price-text" th:text="'Rp ' + ${#numbers.formatDecimal(item.harga, 0, 'COMMA', 0, 'POINT')}">Rp 0</td>
+                            <td>
+                                <form th:action="@{/pelanggan/update-keranjang}" method="post" class="display-inline">
+                                    <input type="hidden" name="tipeMenu" th:value="${item.tipeMenu}" />
+                                    <input type="hidden" name="idMenu" th:value="${item.idMenu}" />
+                                    <div class="qty-controls">
+                                        <button type="button" onclick="decreaseQuantity(this)" class="qty-btn">−</button>
+                                        <input type="number" name="jumlah" th:value="${item.jumlah}" 
+                                               min="1" th:max="${item.stokTersedia}" class="qty-input" />
+                                        <button type="button" onclick="increaseQuantity(this)" class="qty-btn">+</button>
+                                        <button type="submit" class="qty-update-btn">Update</button>
+                                    </div>
+                                    <div class="stock-info" th:text="'Stok tersedia: ' + ${item.stokTersedia}">Stok tersedia: 0</div>
+                                </form>
+                            </td>
+                            <td class="price-text" th:text="'Rp ' + ${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')}">Rp 0</td>
+                            <td>
+                                <form th:action="@{/pelanggan/hapus-keranjang}" method="post" 
+                                      onsubmit="return confirm('Hapus item ini dari keranjang?')" class="display-inline">
+                                    <input type="hidden" name="tipeMenu" th:value="${item.tipeMenu}" />
+                                    <input type="hidden" name="idMenu" th:value="${item.idMenu}" />
+                                    <button type="submit" class="delete-btn">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Summary Card -->
+            <div class="summary-card">
+                <h3>📋 Ringkasan Belanja</h3>
+
+                <div class="summary-row">
+                    <span>Total Item:</span>
+                    <span><strong th:text="${totalItemCount}">0</strong> item</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Total Harga:</span>
+                    <span class="price-text" th:text="'Rp ' + ${#numbers.formatDecimal(totalHarga, 0, 'COMMA', 0, 'POINT')}">Rp 0</span>
+                </div>
+
+                <!-- Balance Validation -->
+                <div th:if="${totalHarga > pelanggan.saldo}" class="balance-section balance-insufficient">
+                    <h4>⚠️ Saldo Tidak Cukup</h4>
+                    <p style="margin: 0.5rem 0 0 0;">
+                        Kekurangan: <strong th:text="'Rp ' + ${#numbers.formatDecimal(totalHarga - pelanggan.saldo, 0, 'COMMA', 0, 'POINT')}">Rp 0</strong>
+                        <br>
+                        <a th:href="@{/pelanggan/topup-saldo}" class="link-danger">
+                            Tambah Saldo →
+                        </a>
+                    </p>
+                </div>
+
+                <div th:if="${totalHarga <= pelanggan.saldo}" class="balance-section">
+                    <h4>✓ Saldo Cukup Untuk Pembayaran</h4>
+                    <p style="margin: 0.5rem 0 0 0;">
+                        Sisa Saldo: <strong th:text="'Rp ' + ${#numbers.formatDecimal(pelanggan.saldo - totalHarga, 0, 'COMMA', 0, 'POINT')}">Rp 0</strong>
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <form th:action="@{/pelanggan/kosongkan-keranjang}" method="post" 
+                          onsubmit="return confirm('Kosongkan seluruh keranjang belanja?')" class="display-contents">
+                        <button type="submit" class="action-btn btn-clear">🗑️ Kosongkan</button>
+                    </form>
+
+                    <a th:href="@{/pelanggan/dashboard}" class="action-btn btn-continue">
+                        ↶ Tambah Item Lain
+                    </a>
+
+                    <!-- Tombol Checkout hanya aktif jika saldo cukup -->
+                    <a th:href="@{/pelanggan/checkout}" 
+                       th:class="${totalHarga <= pelanggan.saldo} ? 'action-btn btn-checkout' : 'action-btn btn-checkout'"
+                       class="btn btn-primary btn-padding-12-20"
+                       th:data-total-harga="${totalHarga}"
+                       th:data-saldo="${pelanggan.saldo}"
+                       id="checkoutBtn"
+                       th:disabled="${totalHarga > pelanggan.saldo}">
+                        🛒 Lanjut ke Checkout
+                    </a>
+                </div>
+            </div>
+
+            <!-- Info Penting -->
+            <div class="info-box">
+                <h4>ℹ️ Informasi Penting</h4>
+                <ul class="mb-0">
+                    <li>Pastikan jumlah pesanan tidak melebihi stok yang tersedia</li>
+                    <li>Saldo akan otomatis terpotong setelah pembayaran berhasil</li>
+                    <li>Transaksi yang sudah dibayar tidak dapat dibatalkan</li>
+                    <li>Stok menu akan otomatis berkurang setelah pembayaran</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <h4>Restoran Premium</h4>
+                    <p>Nikmati pengalaman bersantap yang tak terlupakan bersama kami.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Menu</h4>
+                    <ul>
+                        <li><a th:href="@{/pelanggan/dashboard}">Pesan Sekarang</a></li>
+                        <li><a th:href="@{/pelanggan/keranjang}">Keranjang</a></li>
+                        <li><a th:href="@{/transaksi/history}">Riwayat Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Akun</h4>
+                    <ul>
+                        <li><a th:href="@{/pelanggan/dashboard}">Dashboard</a></li>
+                        <li><a th:href="@{/pelanggan/topup-saldo}">Topup Saldo</a></li>
+                        <li><a th:href="@{/logout}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Sistem Pemesanan Restoran Premium. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Fungsi untuk menambah jumlah
+        function increaseQuantity(button) {
+            const form = button.closest('form');
+            const input = form.querySelector('input[name="jumlah"]');
+            const max = parseInt(input.getAttribute('max')) || 999;
+            let value = parseInt(input.value) || 1;
+            
+            if (value < max) {
+                input.value = value + 1;
+            }
+        }
+        
+        // Fungsi untuk mengurangi jumlah
+        function decreaseQuantity(button) {
+            const form = button.closest('form');
+            const input = form.querySelector('input[name="jumlah"]');
+            let value = parseInt(input.value) || 1;
+            
+            if (value > 1) {
+                input.value = value - 1;
+            }
+        }
+        
+        // Validasi input jumlah saat diketik manual
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantityInputs = document.querySelectorAll('.qty-input');
+            
+            quantityInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const min = parseInt(this.getAttribute('min')) || 1;
+                    const max = parseInt(this.getAttribute('max')) || 999;
+                    let value = parseInt(this.value) || min;
+                    
+                    if (value < min) this.value = min;
+                    if (value > max) this.value = max;
+                });
+            });
+        });
+        
+        // Validasi tombol checkout
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', function(e) {
+                    const totalHarga = parseInt(this.dataset.totalHarga) || 0;
+                    const saldo = parseInt(this.dataset.saldo) || 0;
+                    
+                    if (totalHarga > saldo) {
+                        e.preventDefault();
+                        alert('Saldo tidak cukup!\nSilakan kurangi item atau tambah saldo.');
+                        return false;
+                    }
+                    return true;
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
